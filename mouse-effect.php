@@ -1,8 +1,11 @@
 <?php
 /*
 Plugin Name: Star Mouse Effect Elementor
+Description: Add an enchanting star mouse hover effect to various sections and elements on your Elementor-powered WordPress website. Engage your visitors with a captivating visual experience as they navigate through your content.
+Version: 1.0
+Author: Your Name
+License: GPL-2.0+
 */
-
 // Enqueue scripts and styles
 function mouse_effect_enqueue_assets() {
     // Enqueue external script

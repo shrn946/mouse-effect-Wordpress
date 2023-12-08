@@ -1,7 +1,5 @@
-let start = new Date().getTime();
-
+const start = new Date().getTime();
 const originPosition = { x: 0, y: 0 };
-
 const last = {
   starTimestamp: start,
   starPosition: originPosition,
@@ -21,12 +19,12 @@ const config = {
 
 let count = 0;
 
-const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min,
-  selectRandom = items => items[rand(0, items.length - 1)];
+const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+const selectRandom = items => items[rand(0, items.length - 1)];
 
-const withUnit = (value, unit) => `${value}${unit}`,
-  px = value => withUnit(value, "px"),
-  ms = value => withUnit(value, "ms");
+const withUnit = (value, unit) => `${value}${unit}`;
+const px = value => withUnit(value, "px");
+const ms = value => withUnit(value, "ms");
 
 const calcDistance = (a, b) => {
   const diffX = b.x - a.x,
@@ -37,15 +35,22 @@ const calcDistance = (a, b) => {
 
 const calcElapsedTime = (start, end) => end - start;
 
-const appendElement = element => document.querySelector('.star-effect').appendChild(element),
-  removeElement = (element, delay) => setTimeout(() => element.parentNode.removeChild(element), delay);
+const appendElement = (element, containerClass) => {
+  const container = document.querySelector(`.${containerClass}`);
+  container.appendChild(element);
+};
 
-const createStar = position => {
-  const star = document.createElement("span"),
-    color = selectRandom(config.colors);
+const removeElement = (element, delay) => {
+  setTimeout(() => {
+    element.parentNode.removeChild(element);
+  }, delay);
+};
+
+const createStar = (position, containerClass) => {
+  const star = document.createElement("span");
+  const color = selectRandom(config.colors);
 
   star.className = "star fa-solid fa-sparkle";
-
   star.style.left = px(position.x);
   star.style.top = px(position.y);
   star.style.fontSize = selectRandom(config.sizes);
@@ -54,21 +59,18 @@ const createStar = position => {
   star.style.animationName = config.animations[count++ % 3];
   star.style.starAnimationDuration = ms(config.starAnimationDuration);
 
-  appendElement(star);
-
+  appendElement(star, containerClass);
   removeElement(star, config.starAnimationDuration);
 };
 
-const createGlowPoint = position => {
+const createGlowPoint = (position, containerClass) => {
   const glow = document.createElement("div");
 
   glow.className = "glow-point";
-
   glow.style.left = px(position.x);
   glow.style.top = px(position.y);
 
-  appendElement(glow);
-
+  appendElement(glow, containerClass);
   removeElement(glow, config.glowDuration);
 };
 
@@ -77,24 +79,23 @@ const determinePointQuantity = distance => Math.max(
   1
 );
 
-const createGlow = (last, current) => {
-  const distance = calcDistance(last, current),
-    quantity = determinePointQuantity(distance);
+const createGlow = (last, current, containerClass) => {
+  const distance = calcDistance(last, current);
+  const quantity = determinePointQuantity(distance);
 
-  const dx = (current.x - last.x) / quantity,
-    dy = (current.y - last.y) / quantity;
+  const dx = (current.x - last.x) / quantity;
+  const dy = (current.y - last.y) / quantity;
 
   Array.from(Array(quantity)).forEach((_, index) => {
-    const x = last.x + dx * index,
-      y = last.y + dy * index;
+    const x = last.x + dx * index;
+    const y = last.y + dy * index;
 
-    createGlowPoint({ x, y });
+    createGlowPoint({ x, y }, containerClass);
   });
 };
 
 const updateLastStar = position => {
   last.starTimestamp = new Date().getTime();
-
   last.starPosition = position;
 };
 
@@ -106,27 +107,43 @@ const adjustLastMousePosition = position => {
   }
 };
 
-const handleOnMove = e => {
-  const containerRect = document.querySelector('.star-effect').getBoundingClientRect();
+const handleOnMove = (e, containerClass) => {
+  const containerRect = document.querySelector(`.${containerClass}`).getBoundingClientRect();
   const mousePosition = { x: e.clientX - containerRect.left, y: e.clientY - containerRect.top };
 
   adjustLastMousePosition(mousePosition);
 
-  const now = new Date().getTime(),
-    hasMovedFarEnough = calcDistance(last.starPosition, mousePosition) >= config.minimumDistanceBetweenStars,
-    hasBeenLongEnough = calcElapsedTime(last.starTimestamp, now) > config.minimumTimeBetweenStars;
+  const now = new Date().getTime();
+  const hasMovedFarEnough = calcDistance(last.starPosition, mousePosition) >= config.minimumDistanceBetweenStars;
+  const hasBeenLongEnough = calcElapsedTime(last.starTimestamp, now) > config.minimumTimeBetweenStars;
 
   if (hasMovedFarEnough || hasBeenLongEnough) {
-    createStar(mousePosition);
-
+    createStar(mousePosition, containerClass);
     updateLastStar(mousePosition);
   }
 
-  createGlow(last.mousePosition, mousePosition);
-
+  createGlow(last.mousePosition, mousePosition, containerClass);
   updateLastMousePosition(mousePosition);
 };
 
-document.querySelector('.star-effect').addEventListener('mousemove', e => handleOnMove(e));
+document.querySelector('.effect-section-one').addEventListener('mousemove', e => handleOnMove(e, 'effect-section-one'));
+document.querySelector('.effect-section-two').addEventListener('mousemove', e => handleOnMove(e, 'effect-section-two'));
+document.querySelector('.effect-section-three').addEventListener('mousemove', e => handleOnMove(e, 'effect-section-three'));
+document.querySelector('.effect-section-four').addEventListener('mousemove', e => handleOnMove(e, 'effect-section-four'));
+document.querySelector('.effect-section-five').addEventListener('mousemove', e => handleOnMove(e, 'effect-section-five'));
+document.querySelector('.effect-section-six').addEventListener('mousemove', e => handleOnMove(e, 'effect-section-six'));
+document.querySelector('.effect-section-seven').addEventListener('mousemove', e => handleOnMove(e, 'effect-section-seven'));
+document.querySelector('.effect-section-eight').addEventListener('mousemove', e => handleOnMove(e, 'effect-section-eight'));
+document.querySelector('.effect-section-nine').addEventListener('mousemove', e => handleOnMove(e, 'effect-section-nine'));
+document.querySelector('.effect-section-ten').addEventListener('mousemove', e => handleOnMove(e, 'effect-section-ten'));
 
-document.querySelector('.star-effect').addEventListener('mouseleave', () => updateLastMousePosition(originPosition));
+document.querySelector('.effect-section-one').addEventListener('mouseleave', () => updateLastMousePosition(originPosition));
+document.querySelector('.effect-section-two').addEventListener('mouseleave', () => updateLastMousePosition(originPosition));
+document.querySelector('.effect-section-three').addEventListener('mouseleave', () => updateLastMousePosition(originPosition));
+document.querySelector('.effect-section-four').addEventListener('mouseleave', () => updateLastMousePosition(originPosition));
+document.querySelector('.effect-section-five').addEventListener('mouseleave', () => updateLastMousePosition(originPosition));
+document.querySelector('.effect-section-six').addEventListener('mouseleave', () => updateLastMousePosition(originPosition));
+document.querySelector('.effect-section-seven').addEventListener('mouseleave', () => updateLastMousePosition(originPosition));
+document.querySelector('.effect-section-eight').addEventListener('mouseleave', () => updateLastMousePosition(originPosition));
+document.querySelector('.effect-section-nine').addEventListener('mouseleave', () => updateLastMousePosition(originPosition));
+document.querySelector('.effect-section-ten').addEventListener('mouseleave', () => updateLastMousePosition(originPosition));
